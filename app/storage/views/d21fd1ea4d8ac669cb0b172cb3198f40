@@ -1,0 +1,43 @@
+<script>
+$(function(){
+	$('.dataTables_filter input').attr('placeholder', 'Search');
+});
+</script>
+<<!--form id="bulk-checklist" method="POST">-->
+<p class="caption-1 caption-2"><span class="no-mobile">Client <?php echo ($sub == 'archive')?'Archive':'List'; ?></span></p>
+<table class="datatable datatable-basic">
+	<thead>
+		<tr>
+			<!--<th style="width:26px;min-width:26px;"><input type="checkbox" id="all" onclick="checkall()">-->
+			<th style="width:95px;min-width:95px;"><span class="">METER</span> #
+			<th style="width:250px;min-width:250px;">Name
+			<th style="width:100px;min-width:30px;">Type
+			<th>Option
+		<?php foreach($clients as $client): ?>
+	</thead>
+		<tr>
+			<!--<td style="width:27px;min-width:27px;">&nbsp;<input type="checkbox" name="check-<?php echo $client->id; ?>">-->
+			<td style="width:95px;min-width:95px;"   class="link"><a href="<?php echo url('/client/profile/'.$client->id); ?>" ><?php echo $client->meter_id; ?></a>
+			<td style="width:250px;min-width:250px;" class="link"><a href="<?php echo url('/client/profile/'.$client->id); ?>"><?php echo ucfirst($client->lastname).', '.ucfirst($client->firstname); ?> <?php echo strlen($client->middlename)>0?$client->middlename[0].'.':''; ?></a>
+			<td style="width:100px;min-width:31px;"><?php echo ($client->type == '0')?'Residential':'Commercial'; ?>
+
+			<td class="mobile-hide" style="text-align:right">
+				<a href="<?php echo url('/client/result?user='.$client->id); ?>" class="btn btn-circle btn-success"><i class="fa fa-bar-chart"></i></a>
+				<a href="<?php echo url('/summary.php?user='.$client->id); ?>" target="_blank" class="btn btn-circle btn-info"><i class="fa fa-print"></i></a>
+				<?php if($client->status == 0): ?>
+				<a href="<?php echo url('/client/edit/'.$client->id); ?>" class="btn btn-circle btn-warning"><i class="fa fa-edit"></i></a>
+				<?php endif; ?>
+		<?php endforeach; ?>
+</table>
+<p class="caption-1 caption-2" style="bottom:-20px;top:auto;">
+<!--<?php if($sub == 'archive'): ?>
+	<button class="btn btn-sm btn-success" name="activate"><i class="fa fa-leaf" style="position:relative;top:-1px;font-size:10px"></i></button>
+<?php else: ?>
+	<button class="btn btn-sm btn-danger" name="deactivate"><i class="fa fa-trash" style="position:relative;top:-1px;font-size:10px"></i></button>
+	<button class="btn btn-sm btn-danger" name="ban"><i class="fa fa-ban" style="position:relative;top:-1px;font-size:10px"></i></button>
+<?php endif; ?>-->
+<a href="<?php echo url('/client/create'); ?>" class="btn btn-sm btn-success"><i class="fa fa-plus-circle"></i></a>
+<a href="<?php echo url('/client'); ?>" class="btn btn-sm <?php echo ($sub == 'archive')?'':'btn-hover'; ?>"><i class="fa fa-bars"></i></a>
+<a href="<?php echo url('/client/archive'); ?>" class="btn btn-sm btn-danger <?php echo ($sub == 'archive')?'btn-hover':''; ?>"><i class="fa fa-archive"></i></a>
+</p>
+<!--</form>-->

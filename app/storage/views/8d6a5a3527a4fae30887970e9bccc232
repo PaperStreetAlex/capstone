@@ -1,0 +1,16 @@
+<?php $__env->startSection('content'); ?>
+<?php if($sub == 'add'): ?>
+<?php echo $__env->make('template.client_form', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php elseif($sub == 'view'): ?>
+<?php echo $__env->make('template.client_profile', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php elseif($sub == 'password'): ?>
+<?php echo $__env->make('template.all_password', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php elseif($sub == 'edit'): ?>
+<?php echo $__env->make('template.client_edit', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php elseif($sub == 'result'): ?>
+<?php echo $__env->make('template.client_result', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php else: ?>
+<?php echo $__env->make('template.client', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php endif; ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('user', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

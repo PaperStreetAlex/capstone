@@ -1,0 +1,80 @@
+<input type="hidden" id="url" value="<?php echo url('/'); ?>">
+<div class="navbar">
+	<a href="<?php echo url(); ?>" class="logo"><img src="<?php echo url('/logo.jpg'); ?>" style="width:400px;position:relative;top:-7px"></a>
+	<div class="navlink">
+		<ul>
+			<li class="<?php echo ($page == 'dashboard')?'active':''; ?>"><a href="<?php echo url('/user'); ?>"><i class="fa fa-home"></i></a></li><?php if($session['type'] != 1): ?> <?php if($date['schedules']['import'] == $date['today'] || $date['schedules']['import'] < $date['today'] && $date['today'] < $date['schedules']['release']): ?> <li class="dropdown <?php echo ($page == 'inbox')?'active':''; ?>">
+			<a href="javascript:void(0)" onclick="navtoggle(1)"><i class="fa fa-sliders"></i></a>
+				<ul id="child-1">
+					<li><a href="<?php echo url('/template.php'); ?>" target="_blank">export billing template</a><li>
+					<?php if($session['type'] != 1 ): ?> <li><a href="javascript:void(0)" onclick="deleteCurrentBill()">Delete all bill for this month</a><li><?php endif; ?>
+				</ul>
+			</li><?php endif; ?>	<?php endif; ?> <li class="dropdown">
+			<a href="javascript:void(0)" onclick="navtoggle(2)"><i class="fa fa-globe" style=""></i><?php if($notification['count']>0): ?><span class="notification"><?php echo $notification['count']; ?></span> <?php endif; ?> </a>
+				<ul id="child-2" style="width:370px;height:250px;overflow:auto">
+					<?php foreach($notification['list'] as $h): ?>
+						<li style="text-overflow:ellipsis;overflow:hidden"><a href="javascript:void(0)" id="notification-<?php echo $h->id; ?>" onclick="updateNotification(<?php echo $h->id; ?>)" xhref="<?php echo url('/'.$h->type); ?>" style="font-weight:300;padding:;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;<?php if($h->status==0): ?> color:#fff; <?php endif; ?>"><?php echo $h->content; ?></a></li>
+					<?php endforeach; ?>
+					<li style="position:fixed;top:305px;background:rgba(0,0,0,0.7);width:370px;"><a href="#" onclick="clearNotification()" style="text-align:center;">CLEAR NOTIFICATION</a><li>	
+				</ul>
+			</li><li class="dropdown <?php echo ($page == 'account')?'active':''; ?>">
+				<a href="javascript:void(0)" onclick="navtoggle(3)"><i class="fa fa-gears"></i></a>
+				<ul id="child-3">
+					<li><a href="<?php echo url('/user/profile'); ?>">MY PROFILE</a><li>
+					<li><a href="<?php echo url('/user/password'); ?>">Change Password</a><li>
+					<li><a href="<?php echo url('/user/logout'); ?>">Sign Out</a><li>	
+				</ul>
+			</li><li class="float-right">
+			<a href="javascript:void(0)" class="menu"><i class="fa fa-bars"></i></a></li>
+		</ul>
+	</div>
+</div>
+<div class="sidebar">
+	<div class="space"></div>
+	<a href="<?php echo url(); ?>" class="logo">TBLCFIWSSC</a>
+	<ul>
+		<li class="<?php echo $page=='client'?'active':''; ?>"><a href="javascript:void(0)"><i class="fa fa-chevron-down"></i> <span>Client</span></a>
+			<ul <?php if($page == 'client'): ?> style="display:block" <?php endif; ?>>
+				<li <?php if($page == 'client' && $sub == 'add'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/client/create'); ?>"><i class="fa fa-chevron-right"></i> <span>Add client</span></a></li>
+				<li <?php if($page == 'client' && $sub == 'list'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/client'); ?>"><i class="fa fa-chevron-right"></i> <span>client List</span></a></li>
+				<li <?php if($page == 'client' && $sub == 'archive'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/client/archive'); ?>"><i class="fa fa-chevron-right"></i> <span>Archive</span></a></li>
+			</ul>
+		</li>
+		<li class="<?php echo $page=='billing'?'active':''; ?>"><a href="javascript:void(0)"><i class="fa fa-chevron-down"></i><span>billing</span></a>
+			<ul <?php if($page == 'billing'): ?> style="display:block" <?php endif; ?>>
+					<li <?php if($page == 'billing' && $sub == 'add'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/billing/add'); ?>"><i class="fa fa-chevron-right"></i> <span>Add Billing</span></a></li>
+					<li <?php if($page == 'billing' && $sub == 'create'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/billing/create'); ?>"><i class="fa fa-chevron-right"></i> <span>Import Billing</span></a></li>
+					<li <?php if($page == 'billing' && $sub == 'extra'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/billing/extra'); ?>"><i class="fa fa-chevron-right"></i> <span>Add Extra Billing</span></a></li>
+				<li <?php if($page == 'billing' && $sub == 'list'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/billing'); ?>"><i class="fa fa-chevron-right"></i> <span>Monthly Billing</span></a></li>
+				
+			</ul>
+		</li>
+		<?php if($session['type'] == 2): ?>
+		<li class="<?php echo $page=='accounts'?'active':''; ?>"><a href="javascript:void(0)"><i class="fa fa-chevron-down"></i><span>Accounts</span></a>
+			<ul <?php if($page == 'accounts'): ?> style="display:block" <?php endif; ?>>
+				<li <?php if($page == 'accounts' && $sub == 'create'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/accounts/create'); ?>"><i class="fa fa-chevron-right"></i> <span>Add Account</span></a></li>
+				<li <?php if($page == 'accounts' && $sub == 'list'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/accounts'); ?>"><i class="fa fa-chevron-right"></i> <span>Account List</span></a></li>
+				<li <?php if($page == 'accounts' && $sub == 'archive'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/accounts/archive'); ?>"><i class="fa fa-chevron-right"></i> <span>Archive</span></a></li>
+			</ul>
+		</li>
+		<?php endif; ?>
+		<li class="<?php echo $page=='report'?'active':''; ?>"><a href="javascript:void(0)"><i class="fa fa-chevron-down"></i><span>Statistics</span></a>
+			<ul <?php if($page == 'report'): ?> style="display:block" <?php endif; ?>>
+				<li <?php if($page == 'report' && $sub == 'client'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/statistics/client'); ?>"><i class="fa fa-chevron-right"></i> <span>Client Masterlist</span></a></li>
+				<li <?php if($page == 'report' && $sub == 'bill'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/statistics/billing'); ?>"><i class="fa fa-chevron-right"></i> <span>Client Billing Status</span></a></li>
+				<li <?php if($page == 'report' && $sub == 'income'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/statistics/income'); ?>"><i class="fa fa-chevron-right"></i> <span>Profit </span></a></li>
+				<!--<li <?php if($page == 'report' && $sub == 'consumption'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/statistics/consumption'); ?>"><i class="fa fa-chevron-right"></i> <span>Consumption</span></a></li>-->
+			</ul>
+		</li>
+		<?php if($session['type'] == 2): ?>
+		<li class="<?php echo $page=='system'?'active':''; ?>"><a href="javascript:void(0)"><i class="fa fa-chevron-down"></i><span>System</span></a>
+			<ul <?php if($page == 'system'): ?> style="display:block" <?php endif; ?>>
+				<li <?php if($page == 'system' && $sub == 'schedule'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/system/schedule'); ?>"><i class="fa fa-chevron-right"></i> <span>Schedule</span></a></li>
+				<li <?php if($page == 'system' && $sub == 'price'): ?> class="active" <?php endif; ?>><a href="<?php echo url('/system/price'); ?>"><i class="fa fa-chevron-right"></i> <span>Price</span></a></li>
+			</ul>
+		</li>
+		<?php endif; ?>
+		
+		
+	</ul>
+</div>

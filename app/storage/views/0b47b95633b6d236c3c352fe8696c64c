@@ -1,0 +1,126 @@
+<?php $__env->startSection('content'); ?>
+<?php if($sub == 'create'): ?>
+<?php echo $__env->make('template.billing_create', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php elseif($sub == 'list'): ?>
+<?php echo $__env->make('template.billing', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<?php elseif($sub == 'add'): ?>
+	<?php if(Input::get('sucess') == 1): ?>
+	<script>alert('successfully updated'); window.location.href="<?php echo url('/billing/add'); ?>"; </script>
+	<?php endif; ?>
+	<!-- MANUAL ADD BILLING -->
+	<script>
+	$(function(){
+		$('.dataTables_filter input').attr('placeholder', 'Search');
+	});
+	function validate(x){
+		var ref = $('#ref-'+x).val(),act=$('#client-'+x).val();
+		if(parseInt(ref) > parseInt(act)){
+			$('#client-'+x).val(ref);
+			alert('meter reading must not be less than previous meter reading ');
+		}
+	}
+	</script>
+	<form method="POST">
+	<p class="caption-1 caption-2"><span class="no-mobile">Create billing for <span style="color:red"><?php echo date("F Y",strtotime($billings['current']['name'])); ?></span></span></p>
+	<table class="datatable datatable-basic">
+		<thead>
+			<th style="width:80px">Meter #
+			<th style="width:170px">Client
+			<th style="width:150px;background:#">Prev. Mtr Rdg.
+			<th style="width:130px">Month Cons.
+			<th style="width:300px;">Meter Reading <span class="fa fa-asterisk"></span>
+		</thead>
+		<?php foreach($clients as $c): ?>
+		<?php /**/$total['prev'] = 0 /**/ ?>
+		<?php /**/$set['total'] = 0 /**/ ?>
+		<?php /**/$overall = 0/**/ ?>
+		<?php if(date("Y-m",strtotime($c->start_billing)) <= date("Y-m",strtotime($billings['current']['name']))): ?>
+			<tr style="padding:1px 10px">
+			<td style="width:80px;padding:0"><?php echo $c->meter_id; ?>
+
+			<td style="width:170px;padding:0"><?php echo $c->lastname.', '.$c->firstname.' '; ?><?php echo strlen($c->middlename)>0?$c->middlename[0].'.':''; ?>
+
+			<?php foreach($billing as $b): ?>
+				<?php if(date("Y-m",strtotime($b->month_year)) < $billings['current']['name'] && $b->client == $c->id): ?>
+				<?php /**/ $total['prev'] += ($b->consumption) /**/ ?>
+				<?php endif; ?>
+				<?php if(date("Y-m",strtotime($b->month_year)) == $billings['current']['name'] && $b->client == $c->id): ?>
+				<?php /**/$set['total'] = ($b->consumption) /**/ ?>
+				<?php endif; ?>
+			<?php endforeach; ?>
+			<td style="width:150px;padding:0;background:#"><?php echo $total['prev']; ?>
+
+			<td style="width:130px;padding:0"><?php echo isset($set['total'])? $set['total']:'not set'; ?>
+
+			<?php /**/$overall = $set['total'] + $total['prev']/**/ ?>
+			<td style="padding:0"><input type="hidden" value="<?php echo $total['prev']; ?>"  id="ref-<?php echo $c->id; ?>"><input type="text" id="client-<?php echo $c->id; ?>" class="money" onblur="validate(<?php echo $c->id; ?>)" name="client-<?php echo $c->id; ?>" value="<?php echo $overall; ?>">
+		<?php endif; ?>
+		<?php endforeach; ?>
+
+		
+	</table>
+	<p class="caption-1 caption-2 caption-3" style="padding:10px"><button class="btn btn-sm">Submit</button></p>
+	</form>
+<?php else: ?>
+<script>
+$(function(){
+	$('#search').val(''),$('#id').val('');
+	document.getElementById('search').disabled = false;
+	$('#search').keyup(function(){
+		var x = $(this).val();
+		if(x.length > 3){
+			$.ajax({
+	        	type: "GET",
+	        	url: "<?php echo url('/billing/list'); ?>",
+	        	data: {x:x},
+	        	success: function(data){$('#result').html(data);}
+       		});
+		}
+	});
+});
+function addMe(x,y){
+	$('#id').val(x);
+	$('#search').val('meter # : '+y);
+	document.getElementById('search').disabled = true;
+	$('#result').html('');
+	$('#clear').show();
+}
+function clearMe(){
+	$('#id').val('');
+	$('#search').val('');
+	document.getElementById('search').disabled = false;
+	$('#clear').hide();	
+}
+</script>
+<p class="caption-1 caption-2">Add Extra Billing</p>
+<form method="POST">
+<div class="outer">
+	<div class="form-center">
+		<?php if(\Input::get('success') == 1): ?>
+		<p class="success">Extra Billing Successfully added</p>
+		<?php endif; ?>
+		<?php if($date['schedules']['release'] > $date['today']): ?>
+			<?php /**/ $extra_date = $billings['current']['name'] /**/ ?>
+		<?php else: ?>
+			<?php /**/ $extra_date = $billings['next']['name'] /**/ ?>
+		<?php endif; ?>
+		<p class="caption-4">Note: This will be added to the  <?php echo date("F Y",strtotime($extra_date)); ?> Billing  </p>
+		<input type="text" name="month" value="<?php echo $extra_date; ?>" required disabled>
+		<input type="text" style="display:none" name="client" id="id" required>
+		<label>Search For Client Meter ID / Name <span class="fa fa-asterisk"></span></label>
+		<div style="position:relative;">
+			<a href="javascript:void(0)" id="clear" onclick="clearMe()" style="display:none;position:absolute;right:0;top:4px" class="btn btn-sm btn-danger"><i class="fa fa-close" style="position:relative;top:-1px"></i></a>
+			<input type="text" id="search" placeholder="Search">
+		</div>
+		<div id="result" style="max-height:130px;overflow:auto;background:#fff;box-shadow:0 0 3px rgba(0,0,0,0.2);position:relative;top:-20px"></div>
+		<label>Amount  <span class="fa fa-asterisk"></span></label>
+		<input type="number" class="money" min="1" name="price" placeholder="Amount" required>
+		<label>Brief Description about this extra bill <span class="fa fa-asterisk"></span></label>
+		<textarea style="height:130px" name="description" required></textarea>
+		<p><button class="btn">Submit</button>
+	</div>
+</div>
+</form>
+<?php endif; ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('user', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

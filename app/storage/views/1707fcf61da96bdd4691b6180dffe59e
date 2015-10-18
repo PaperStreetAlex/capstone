@@ -1,0 +1,48 @@
+<?php foreach($users as $user): ?>
+<div class="outer">
+<div class="form-center">
+<p class="caption-1 caption-2"><?php echo ($table == 'User')?'ACCOUNT':'CLIENT'; ?> PROFILE </p>
+<div class="profile">
+<p class=""><span>Name : </span> <?php echo $user->lastname.', '.$user->firstname.' '.$user->middlename; ?> 
+<?php if($table == 'User'): ?>
+<p class=""><span>Position : </span><?php if($user->type==2): ?> President <?php elseif($user->type==1): ?> Treasurer <?php else: ?> Secretary <?php endif; ?> </p>
+<?php else: ?>
+<p><span>Using Password : </span> <?php if($user->password == ''): ?> NO, set password below so user can signin <?php else: ?> YES <?php endif; ?></p>
+<p class=""><span>Meter ID : </span><?php echo $user->meter_id; ?> </p>
+<p class=""><span>Type : </span><?php echo ($user->type==0)?'A':'B'; ?> </p>
+<?php endif; ?>
+<p class=""><span>Account Status : </span><?php if($user->status == 0): ?> Active <?php elseif($user->status == 0): ?> Disabled <?php else: ?> Banned <?php endif; ?></p>
+<p class=""><span>Address : </span><?php echo $user->address; ?> 
+<p class=""><span>Email Address : </span><?php echo ($user->email == '')?'':$user->email; ?> 
+<p class=""><span>Contact Number : </span><?php echo ($user->contact == '')?'':$user->contact; ?> 
+<p class=""><span>Date Created : </span><?php echo date("F d, Y", strtotime($user->created_at)); ?> 
+<p  class="option">
+	
+</p>
+</div>
+</div>
+</div>
+<?php if($session['type'] == 2 || $user->id == $session['id']): ?>
+<?php if($page == 'accounts'): ?>
+<p class="caption-1 caption-2 caption-3">
+	<a href="<?php echo url('/accounts/edit/'.$user->id); ?>" class="btn btn-sm"><i class="fa fa-edit"></i></a>
+	<a href="<?php echo url('/accounts/password/'.$user->id); ?>" class="btn btn-sm">&nbsp;<i class="fa fa-lock"></i>&nbsp;</a>
+	<?php if($session['type'] == 2 && $session['id'] != $user->id): ?>
+		<?php if($user->status == 0): ?>
+			<a href="<?php echo url('/user/delete?id='.$user->id.'&status=1'); ?>" class="btn btn-sm btn-danger"><i class="fa fa-trash" style="font-size:15px"></i></a>
+		<?php else: ?>
+			<a href="<?php echo url('/user/delete?id='.$user->id.'&status=0'); ?>" class="btn btn-sm btn-success"><i class="fa fa-leaf" style="font-size:15px"></i></a>
+		<?php endif; ?>
+	<?php endif; ?>
+</p>
+<?php else: ?>
+<p class="caption-1 caption-2 caption-3">
+	<a href="<?php echo url('/user/edit/'.$user->id); ?>" class="btn btn-sm"><i class="fa fa-edit"></i></a>
+	<a href="<?php echo url('/user/password/'.$user->id); ?>" class="btn btn-sm">&nbsp;<i class="fa fa-lock"></i>&nbsp;</a>
+	<?php if($session['type'] == 2 && $session['id'] != $user->id): ?>
+	<a href="" class="btn btn-danger btn-sm" ><i class="fa fa-remove" style="font-size:15px;"></i></a>
+	<?php endif; ?>
+</p>
+<?php endif; ?>
+<?php endif; ?>
+<?php endforeach; ?>

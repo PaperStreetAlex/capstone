@@ -1,0 +1,52 @@
+<script>
+$(function(){
+	$('.dataTables_filter input').attr('placeholder', 'Search');
+});
+</script>
+<?php if(Input::get('date')!=''): ?> <?php /**/ $pick = Input::get('date')/**/ ?> <?php else: ?> <?php /**/ $pick = $date_ym /**/ ?> <?php endif; ?>
+<p class="caption-1 caption-2"><span class="no-mobile">Billings for <span style="color:red"><?php echo date("F Y",strtotime($date_ym)); ?></span></span></p>
+<table class="datatable datatable-basic">
+	<thead>
+		<tr>
+			<th style="width:90px;min-width:90px;"><span class="">METER</span> #
+			<th style="width:170px;min-width:170px;">Name
+			<th style="width:30px;min-width:30px;">Consumption
+			<th style="width:95px;min-width:50px;">Extra
+			<th style="width:100px;min-width:100px">Total
+			<th style="width:50px;min-width:50px;">Paid
+			<th>Option
+		<?php foreach($clients as $k => $v): ?>
+	</thead>
+		<?php foreach($bills as $b): ?>
+		<?php if($b->client == $v['id']): ?>
+		<?php if(\Input::get('filter') == '' || Input::get('filter') == $b->status): ?>
+			<?php /**/ $total = $b->total+ $v['extra'] /**/ ?>
+			<?php if($price['vat']>0): ?> <?php /**/ $total += ($total/100)*$price['vat'] /**/ ?> <?php endif; ?>
+			<tr>
+			<td style="width:90px;min-width:90px;" class="link"><a href="<?php echo url('/client/result?user='.$v['id']); ?>"><?php echo $v['meter_id']; ?></a>
+			<td style="width:170px;min-width:170px;" class="link"><a href="<?php echo url('/client/result?user='.$v['id']); ?>"><?php echo $v['name']; ?></a>
+			<td style="width:90px;min-width:31px;"><?php echo $b->consumption; ?>
+
+			<td style="width:95px;min-width:50px;"><?php if($v['extra']> 0): ?> PHP <?php echo number_format($v['extra'],2,'.',','); ?>  <?php else: ?> - <?php endif; ?>
+			<td style="width:100px;min-width:100px">PHP <?php echo number_format($total + $b->penalty,2,'.',','); ?> 
+			<td style="width:50px;min-width:50px"><?php if($b->status == 0): ?><b style="color:red">NO</b> <?php else: ?> <b style="color:green">Paid</b> <?php endif; ?>
+			<td class="mobile-hide" style="text-align:right">
+			<?php if($b->status == 0): ?>
+				<a href="<?php echo url('/reading.php?client='.$v['id'].'&month='.$pick); ?>" target="_blank" class="btn btn-circle btn-info"><i class="fa fa-print" style="font-size:15px"></i></a>
+				<?php if($session['type'] != 0 && $date['schedules']['release'] <= $date['today']): ?>
+				<a href="<?php echo url('/payment/bill?client='.$v['id'].'&month='.$pick); ?>" target="_blank" class="btn btn-circle btn-weird"><i class="fa fa-paypal" style="font-size:15px"></i></a>
+				<?php endif; ?>
+			<?php else: ?>
+				<a href="<?php echo url('/payment.php?client='.$v['id'].'&month='.$pick); ?>" target="_blank" class="btn btn-circle btn-info"><i class="fa fa-print" style="font-size:15px"></i></a>
+			<?php endif; ?>
+		<?php endif; ?>
+		<?php endif; ?>
+		<?php endforeach; ?>
+		<?php endforeach; ?>
+</table>
+<p class="caption-1 caption-2 caption-3">
+<a href="<?php echo url('/billing?date='); ?><?php echo date("Y-m",strtotime($pick."- 1 months")); ?>" class="btn btn-sm"><i class="fa fa-chevron-left"></i></a>
+<a href="<?php echo url('/reading.php?month='.$pick); ?>" target="_blank" class="btn btn-sm btn-info">Print All</a>
+<a href="<?php echo url('/billing'); ?>" class="btn btn-sm btn-danger">UnFilter</a>
+<a href="<?php echo url('/billing?date='); ?><?php echo date("Y-m",strtotime($pick."+ 1 months")); ?>" class="btn btn-sm"><i class="fa fa-chevron-right"></i></a>
+</p>

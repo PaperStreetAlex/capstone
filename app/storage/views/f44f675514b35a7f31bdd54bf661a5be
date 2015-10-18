@@ -1,0 +1,89 @@
+<?php $__env->startSection('content'); ?>
+<script>
+function toggleMonth(){
+	var e = document.getElementById("type");
+	var type = e.options[e.selectedIndex].value;
+	if(type == 1){
+		document.getElementById('mstart').required = true;
+		document.getElementById('mend').required = true;
+		$('#option-1').show();
+		$('#option-2').hide();
+	}else{
+		document.getElementById('mstart').required = false;
+		document.getElementById('mend').required = false;
+		$('#option-1').hide();
+		$('#option-2').show();
+	}
+}
+</script>
+<div class="outer">	
+<p class="caption-1 caption-2"><?php echo strtoupper($sub); ?> Statistics</p>
+<div class="form-center">
+<form method="GET" target="_blank" action="<?php if($sub=='client'): ?> <?php echo url('/client.php'); ?> <?php elseif($sub=='income'): ?> <?php echo url('/income.php'); ?> <?php else: ?> <?php echo url('/consumption.php'); ?> <?php endif; ?>">
+
+<?php if($sub == 'client'): ?>
+<label>Client Status</label>
+<select name="status">
+	<option value="3">All</option>
+	<option value="0">Active</option>
+	<option value="1">Deleted</option>
+	<option value="2">Cutted Off</option>
+</select>
+<label>Client Type</label>
+<select name="type">
+	<option value="3">All</option>
+	<option value="0">Residential</option>
+	<option value="1">Commercial</option>
+</select>
+
+<?php else: ?>
+
+<label>Report Type</label>
+<select name="type" id="type"  onchange="toggleMonth()">
+	<option value="1" selected>Monthly</option>
+	<option value="2">Yearly</option>
+</select>
+<div id="option-1">
+	<div class="col-50">
+		<label>Select Start Month <span class="fa fa-asterisk"></span></label>
+		<input type="month" id="mstart" value="<?php echo date("Y-m"); ?>" name="start" required>
+	</div>
+	<div class="col-50">
+		<label>Select end Month <span class="fa fa-asterisk"></span></label>
+		<input type="month" id="mend"  value="<?php echo date("Y-m"); ?>" name="end" required>
+	</div>
+</div>
+<div id="option-2" style="display:none">
+	<div class="col-50">
+		<label>Select Year <span class="fa fa-asterisk"></span></label>
+		<select name="syear">
+			<?php /**/ $eyear = $year /**/ ?>
+			<?php if($year['start'] <= $year['end']): ?>
+			<option><?php echo $year['start']; ?></option>
+			<?php /**/ $year['start']++ /**/ ?>
+			<?php endif; ?>
+		</select>
+	</div>
+	<div class="col-50">
+		<label>Select Year <span class="fa fa-asterisk"></span></label>
+		<select name="eyear">
+			<?php if($eyear['start'] <= $eyear['end']): ?>
+			<option><?php echo $eyear['start']; ?></option>
+			<?php /**/ $eyear['start']++ /**/ ?>
+			<?php endif; ?>
+		</select>
+	</div>
+</div>
+<label>Payment Status</label>
+<select name="status">
+	<option value="1">Paid</option>
+	<option value="2">Unpaid</option>
+	<option value="1">All</option>
+</select>
+<?php endif; ?>
+<p><button class="btn">Generate Report</button></p>
+</form>
+</div>
+</div>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('user', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

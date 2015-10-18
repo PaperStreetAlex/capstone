@@ -1,0 +1,33 @@
+<html>
+<head>
+	<title><?php echo ucwords($page); ?> - TBLCFIWSSC</title>
+	<link href="<?php echo url('/dist/css/datatable.css'); ?>" rel="stylesheet">
+	<link href="<?php echo url('/dist/css/user.css'); ?>" rel="stylesheet">
+	<link href="<?php echo url('/dist/css/font-awesome.min.css'); ?>" rel="stylesheet">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<script src="<?php echo url('/dist/js/jquery.js'); ?>"></script>
+	<script src="<?php echo url('/dist/js/user.js'); ?>"></script>
+	<script src="<?php echo url('/dist/js/datatable.js'); ?>"></script>
+	<script src="<?php echo url('dist/js/chart.js'); ?>"></script>
+	<script>
+		function filter(){
+			$('.dataTables_filter input').val('no');
+		}
+	</script>
+</head>
+<body <?php if(Input::get('filter') != ''): ?> onload="filter()" <?php endif; ?>>
+<div class="modal">
+	<div class="modal-inner">
+		<a href="javascript:void(0)" class="modal-close btn btn-circle btn-danger" onclick="modal_out()"><i class="fa fa-close"></i></a>
+		<div class="ajax">
+		</div>
+	</div>
+</div>
+<div style="overflow-x:hidden">
+<?php echo $__env->make('user.navbar', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>
+<div class="row" id="row">
+<?php echo $__env->yieldContent('content'); ?>
+</div>
+</div>
+</body>
+</html>
