@@ -102,7 +102,7 @@ function clearMe(){
 			{{--*/ $extra_date = $billings['next']['name'] /*--}}
 		@endif
 		<p class="caption-4">Note: This will be added to the  {{date("F Y",strtotime($extra_date))}} Billing  </p>
-		<input type="text" name="month" value="{{$extra_date}}" required disabled>
+		<input type="text" name="month" value="{{$extra_date}}" required readonly>
 		<input type="text" style="display:none" name="client" id="id" required>
 		<label>Search For Client Meter ID / Name <span class="fa fa-asterisk"></span></label>
 		<div style="position:relative;">
